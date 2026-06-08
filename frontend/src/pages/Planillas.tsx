@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { planillasApi, personalApi } from '../services/api'
+import { planillasApi, personalApi, API_URL } from '../services/api'
 import { Plus, Trash2, X, Eye, FileSpreadsheet, DollarSign, ArrowDownToLine, ArrowUpFromLine, User, Calendar, ChevronLeft, ChevronRight, Search, Loader2, Pencil, AlertCircle, Check, Filter, TrendingUp, Receipt } from 'lucide-react'
 
 interface Personal {
@@ -172,7 +172,7 @@ export default function Planillas() {
   const saveEdit = async () => {
     if (!editPlanilla) return
     try {
-      await fetch(`${import.meta.env.VITE_API_URL}/api/planillas/${editPlanilla.id}/editar`, {
+      await fetch(`${API_URL}/api/planillas/${editPlanilla.id}/editar`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -234,7 +234,7 @@ export default function Planillas() {
     const monto = parseFloat(ingresoForm.monto)
     if (isNaN(monto) || monto <= 0) return
 
-    await fetch(`${import.meta.env.VITE_API_URL}/api/ingresos`, {
+    await fetch(`${API_URL}/api/ingresos`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ planilla_id: detailPlanilla.id, tipo: ingresoForm.tipo, monto })
@@ -249,7 +249,7 @@ export default function Planillas() {
     const monto = parseFloat(descuentoForm.monto)
     if (isNaN(monto) || monto <= 0) return
 
-    await fetch(`${import.meta.env.VITE_API_URL}/api/descuentos`, {
+    await fetch(`${API_URL}/api/descuentos`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ planilla_id: detailPlanilla.id, tipo: descuentoForm.tipo, monto })
@@ -260,13 +260,13 @@ export default function Planillas() {
   }
 
   const deleteIngreso = async (id: number) => {
-    await fetch(`${import.meta.env.VITE_API_URL}/api/ingresos/${id}`, { method: 'DELETE' })
+    await fetch(`${API_URL}/api/ingresos/${id}`, { method: 'DELETE' })
     const res = await planillasApi.get(detailPlanilla.id)
     setDetailPlanilla(res.data)
   }
 
   const deleteDescuento = async (id: number) => {
-    await fetch(`${import.meta.env.VITE_API_URL}/api/descuentos/${id}`, { method: 'DELETE' })
+    await fetch(`${API_URL}/api/descuentos/${id}`, { method: 'DELETE' })
     const res = await planillasApi.get(detailPlanilla.id)
     setDetailPlanilla(res.data)
   }
