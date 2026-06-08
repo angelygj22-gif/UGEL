@@ -164,7 +164,6 @@ func BuscarPersonal(c *gin.Context) {
 
 	var personal []models.Personal
 	db.Where("nombres ILIKE ? OR apellidos ILIKE ? OR dni ILIKE ?", "%"+search+"%", "%"+search+"%", "%"+search+"%").
-		Where("activo = ?", true).
 		Limit(limit).
 		Order("apellidos, nombres").
 		Find(&personal)
@@ -1091,7 +1090,7 @@ func ResumenDashboard(c *gin.Context) {
 	db := getDB(c)
 
 	var totalPersonal int64
-	db.Model(&models.Personal{}).Where("activo = ?", true).Count(&totalPersonal)
+	db.Model(&models.Personal{}).Count(&totalPersonal)
 
 	var totalPlanillas int64
 	db.Model(&models.Planilla{}).Count(&totalPlanillas)
