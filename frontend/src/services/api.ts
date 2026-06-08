@@ -48,7 +48,7 @@ export const dashboardApi = {
   getResumen: () => api.get('/api/dashboard/resumen'),
 }
 
-const PYTHON_URL = import.meta.env.VITE_PYTHON_URL || 'http://localhost:8081'
+export const PYTHON_URL = import.meta.env.VITE_PYTHON_URL || 'https://ugel-1a.onrender.com'
 
 export const importarApi = {
   excel: (file: File, mes: number, anio: number) => {

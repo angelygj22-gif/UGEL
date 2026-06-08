@@ -1,5 +1,6 @@
 ﻿import { useState, useRef } from 'react'
 import { Upload, FileSpreadsheet, CheckCircle, AlertCircle, Calendar, Users, LayoutList, FileType, ArrowRight, HelpCircle, AlertTriangle, DollarSign } from 'lucide-react'
+import { PYTHON_URL } from '../services/api'
 
 const MESES = [
   { v: 1, l: 'Enero' }, { v: 2, l: 'Febrero' }, { v: 3, l: 'Marzo' },
@@ -57,7 +58,7 @@ export default function Importar() {
       const formData = new FormData()
       formData.append('file', file)
 
-      const response = await fetch('/python/validate-excel', { method: 'POST', body: formData })
+      const response = await fetch(`${PYTHON_URL}/validate-excel`, { method: 'POST', body: formData })
       const data = await response.json()
       if (response.ok) {
         setValidacion(data)
@@ -84,7 +85,7 @@ export default function Importar() {
       formData.append('mes', String(mes))
       formData.append('anio', String(anio))
 
-      const response = await fetch('/python/process-excel', { method: 'POST', body: formData })
+      const response = await fetch(`${PYTHON_URL}/process-excel`, { method: 'POST', body: formData })
       const data = await response.json()
       if (response.ok) {
         setResult(data)
