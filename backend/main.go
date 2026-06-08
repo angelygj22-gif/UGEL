@@ -22,7 +22,7 @@ var db *gorm.DB
 func initDB() {
 	dsn := os.Getenv("DATABASE_URL")
 	if dsn == "" {
-		dsn = "postgres://planillas:planillas2024@postgres:5432/planillas?sslmode=disable"
+		dsn = "postgresql://neondb_owner:npg_9RSHowM0eAnO@ep-little-violet-aq1yli6a-pooler.c-8.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
 	}
 
 	var err error
@@ -67,7 +67,7 @@ func main() {
 
 	// CORS middleware
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost", "http://localhost:5173", "http://localhost:80", "http://127.0.0.1", "http://127.0.0.1:5173"},
+		AllowOrigins:     []string{"http://localhost", "http://localhost:5173", "http://localhost:80", "http://127.0.0.1", "http://127.0.0.1:5173", "https://ugel-two.vercel.app"},
 		AllowCredentials: true,
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},

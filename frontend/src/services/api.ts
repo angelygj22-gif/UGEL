@@ -7,6 +7,7 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
 })
 
 export const personalApi = {
@@ -53,8 +54,9 @@ export const importarApi = {
     formData.append('file', file)
     formData.append('mes', String(mes))
     formData.append('anio', String(anio))
-    return fetch('/python/process-excel', { method: 'POST', body: formData })
-      .then(r => r.json())
+    return api.post('/api/importar/excel', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }).then(r => r.data)
   },
 }
 
