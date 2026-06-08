@@ -48,15 +48,18 @@ export const dashboardApi = {
   getResumen: () => api.get('/api/dashboard/resumen'),
 }
 
+const PYTHON_URL = import.meta.env.VITE_PYTHON_URL || 'http://localhost:8081'
+
 export const importarApi = {
   excel: (file: File, mes: number, anio: number) => {
     const formData = new FormData()
     formData.append('file', file)
     formData.append('mes', String(mes))
     formData.append('anio', String(anio))
-    return api.post('/api/importar/excel', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    }).then(r => r.data)
+    return fetch(`${PYTHON_URL}/process-excel`, {
+      method: 'POST',
+      body: formData,
+    }).then(r => r.json())
   },
 }
 

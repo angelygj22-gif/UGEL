@@ -3,10 +3,12 @@ import re
 import requests
 import xlrd
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from openpyxl import load_workbook
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
+CORS(app, origins="*")
 
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8080")
 UPLOAD_FOLDER = "/app/uploads"
