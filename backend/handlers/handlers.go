@@ -1003,8 +1003,17 @@ func ImportarHaberes(c *gin.Context) {
 					warnings = append(warnings, fmt.Sprintf("Error al insertar descuento '%s' para '%s': %v", d.Concepto, emp.Nombre, err))
 				}
 			}
+
+			var totalHab, totalDesc float64
+			db.Model(&models.Ingreso{}).Where("planilla_id = ?", planilla.ID).
+				Select("COALESCE(SUM(monto), 0)").Scan(&totalHab)
+			db.Model(&models.Descuento{}).Where("planilla_id = ?", planilla.ID).
+				Select("COALESCE(SUM(monto), 0)").Scan(&totalDesc)
+			db.Model(&planilla).Updates(map[string]interface{}{
+				"total_haberes":    totalHab,
+				"total_descuentos": totalDesc,
+			})
 		}
-		// Totals are maintained by DB triggers automatically
 	}
 
 	c.JSON(http.StatusOK, gin.H{
