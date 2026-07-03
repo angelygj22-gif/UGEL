@@ -68,7 +68,7 @@ func main() {
 
 	// CORS middleware
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost", "http://localhost:5173", "http://localhost:80", "http://127.0.0.1", "http://127.0.0.1:5173", "https://ugel-two.vercel.app"},
+		AllowOrigins:     []string{"http://localhost", "http://localhost:5173", "http://localhost:80", "http://127.0.0.1", "http://127.0.0.1:5173", "https://ugel-two.vercel.app", "https://ugel-08-constancias.vercel.app"},
 		AllowCredentials: true,
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
