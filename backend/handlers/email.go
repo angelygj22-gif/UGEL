@@ -1,32 +1,30 @@
 package handlers
 
 import (
-	"crypto/tls"
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"log"
-	"net"
-	"net/smtp"
+	"net/http"
 	"os"
 	"time"
 )
 
-type SMTPConfig struct {
-	Host     string
-	Port     string
-	Username string
-	Password string
-	From     string
+type EmailJSConfig struct {
+	ServiceID  string
+	TemplateID string
+	PublicKey  string
+	PrivateKey string
 }
 
-var smtpCfg SMTPConfig
+var emailCfg EmailJSConfig
 
 func init() {
-	smtpCfg = SMTPConfig{
-		Host:     getEnv("SMTP_HOST", "smtp.gmail.com"),
-		Port:     getEnv("SMTP_PORT", "465"),
-		Username: getEnv("SMTP_USERNAME", "contanciasugel08@gmail.com"),
-		Password: getEnv("SMTP_PASSWORD", "jcqp quls filb kblm"),
-		From:     getEnv("SMTP_FROM", "contanciasugel08@gmail.com"),
+	emailCfg = EmailJSConfig{
+		ServiceID:  getEnv("EMAILJS_SERVICE_ID", "service_k4g6qei"),
+		TemplateID: getEnv("EMAILJS_TEMPLATE_ID", "template_dzkkt25"),
+		PublicKey:  getEnv("EMAILJS_PUBLIC_KEY", "o4Ab5rcItZHiiO54w"),
+		PrivateKey: getEnv("EMAILJS_PRIVATE_KEY", "3QLFmQ9NuEUdT67yP_G8X"),
 	}
 }
 
@@ -37,67 +35,52 @@ func getEnv(key, fallback string) string {
 	return fallback
 }
 
-type plainAuth struct {
-	user, pass string
+type emailJSRequest struct {
+	ServiceID  string            `json:"service_id"`
+	TemplateID string            `json:"template_id"`
+	UserID     string            `json:"user_id"`
+	AccessToken string           `json:"accessToken"`
+	TemplateParams map[string]string `json:"template_params"`
 }
 
-func (a *plainAuth) Start(server *smtp.ServerInfo) (string, []byte, error) {
-	resp := []byte("\x00" + a.user + "\x00" + a.pass)
-	return "PLAIN", resp, nil
-}
-
-func (a *plainAuth) Next(fromServer []byte, more bool) ([]byte, error) {
-	if more {
-		return nil, fmt.Errorf("unexpected server challenge")
+func sendEmail(to, subject, html string, params map[string]string) error {
+	templateParams := map[string]string{
+		"to_email": to,
+		"subject":  subject,
+		"message":  html,
 	}
-	return nil, nil
-}
+	for k, v := range params {
+		templateParams[k] = v
+	}
 
-func sendEmail(to, subject, body string) error {
-	addr := fmt.Sprintf("%s:%s", smtpCfg.Host, smtpCfg.Port)
-	log.Printf("[EMAIL] Conectando a %s...", addr)
+	payload := emailJSRequest{
+		ServiceID:      emailCfg.ServiceID,
+		TemplateID:     emailCfg.TemplateID,
+		UserID:         emailCfg.PublicKey,
+		AccessToken:    emailCfg.PrivateKey,
+		TemplateParams: templateParams,
+	}
 
-	tlsConfig := &tls.Config{ServerName: smtpCfg.Host}
-	conn, err := tls.DialWithDialer(&net.Dialer{Timeout: 15 * time.Second}, "tcp", addr, tlsConfig)
+	bodyBytes, _ := json.Marshal(payload)
+	log.Printf("[EMAILJS] Enviando correo a %s...", to)
+
+	req, err := http.NewRequest("POST", "https://api.emailjs.com/api/v1.0/email/send", bytes.NewReader(bodyBytes))
 	if err != nil {
-		return fmt.Errorf("no se pudo conectar a %s: %v", addr, err)
+		return fmt.Errorf("error creando request: %v", err)
 	}
-	defer conn.Close()
+	req.Header.Set("Content-Type", "application/json")
 
-	client, err := smtp.NewClient(conn, smtpCfg.Host)
+	client := &http.Client{Timeout: 15 * time.Second}
+	resp, err := client.Do(req)
 	if err != nil {
-		return fmt.Errorf("error creando cliente SMTP: %v", err)
+		return fmt.Errorf("error enviando a EmailJS: %v", err)
 	}
-	defer client.Quit()
+	defer resp.Body.Close()
 
-	auth := &plainAuth{user: smtpCfg.Username, pass: smtpCfg.Password}
-	if err = client.Auth(auth); err != nil {
-		return fmt.Errorf("error en autenticacion: %v", err)
-	}
-
-	if err = client.Mail(smtpCfg.From); err != nil {
-		return fmt.Errorf("error MAIL FROM: %v", err)
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("EmailJS respondio con status %d", resp.StatusCode)
 	}
 
-	if err = client.Rcpt(to); err != nil {
-		return fmt.Errorf("error RCPT TO: %v", err)
-	}
-
-	w, err := client.Data()
-	if err != nil {
-		return fmt.Errorf("error DATA: %v", err)
-	}
-
-	msg := []byte(fmt.Sprintf("From: %s\r\nTo: %s\r\nSubject: %s\r\nContent-Type: text/html; charset=\"UTF-8\"\r\n\r\n%s\r\n", smtpCfg.From, to, subject, body))
-	if _, err = w.Write(msg); err != nil {
-		w.Close()
-		return fmt.Errorf("error escribiendo mensaje: %v", err)
-	}
-
-	if err = w.Close(); err != nil {
-		return fmt.Errorf("error cerrando DATA: %v", err)
-	}
-
-	log.Printf("[EMAIL] Correo enviado exitosamente a %s", to)
+	log.Printf("[EMAILJS] Correo enviado exitosamente a %s", to)
 	return nil
 }
