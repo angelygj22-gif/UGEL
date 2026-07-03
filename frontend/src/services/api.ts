@@ -138,8 +138,10 @@ export const importarApi = {
     formData.append('file', file)
     formData.append('mes', String(mes))
     formData.append('anio', String(anio))
+    const token = localStorage.getItem('access_token')
     return fetch(`${PYTHON_URL}/process-excel`, {
       method: 'POST',
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
       body: formData,
     }).then(r => r.json())
   },

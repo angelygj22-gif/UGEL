@@ -288,9 +288,15 @@ def process_excel():
             "empleados": empleados,
         }
 
+        auth_header = request.headers.get("Authorization")
+        headers = {}
+        if auth_header:
+            headers["Authorization"] = auth_header
+
         response = requests.post(
             f"{BACKEND_URL}/api/importar/haberes",
             json=payload,
+            headers=headers,
             timeout=300,
         )
 

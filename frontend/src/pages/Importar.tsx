@@ -85,7 +85,12 @@ export default function Importar() {
       formData.append('mes', String(mes))
       formData.append('anio', String(anio))
 
-      const response = await fetch(`${PYTHON_URL}/process-excel`, { method: 'POST', body: formData })
+      const token = localStorage.getItem('access_token')
+      const response = await fetch(`${PYTHON_URL}/process-excel`, {
+        method: 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: formData,
+      })
       const data = await response.json()
       if (response.ok) {
         setResult(data)
