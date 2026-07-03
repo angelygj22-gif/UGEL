@@ -62,9 +62,11 @@ func ForgotPassword(c *gin.Context) {
 		<hr><p style="color:#666;font-size:12px;">Planillas SU - Sistema de Gestión de Nómina</p>
 	`, usuario.Nombre, resetLink)
 
-	if err := sendEmail(usuario.Email, subject, body); err != nil {
-		log.Printf("Error enviando email a %s: %v", usuario.Email, err)
-	}
+	go func() {
+		if err := sendEmail(usuario.Email, subject, body); err != nil {
+			log.Printf("Error enviando email a %s: %v", usuario.Email, err)
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{"message": "Si el correo existe, recibirás un enlace para restablecer tu contraseña"})
 }
