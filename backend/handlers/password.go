@@ -51,18 +51,11 @@ func ForgotPassword(c *gin.Context) {
 	resetLink := fmt.Sprintf("%s/reset-password?token=%s", frontendURL, token)
 
 	subject := "Restablece tu contraseña - Planillas SU"
-	body := fmt.Sprintf(`
-		<h2>Restablecimiento de contraseña</h2>
-		<p>Hola <strong>%s</strong>,</p>
-		<p>Recibimos una solicitud para restablecer tu contraseña.</p>
-		<p>Haz clic en el siguiente enlace para crear una nueva contraseña:</p>
-		<p><a href="%s" style="display:inline-block;padding:12px 24px;background-color:#dc2626;color:#fff;text-decoration:none;border-radius:8px;font-weight:bold;">Restablecer contraseña</a></p>
-		<p>Este enlace expira en 1 hora.</p>
-		<p>Si no solicitaste este cambio, ignora este mensaje.</p>
-		<hr><p style="color:#666;font-size:12px;">Planillas SU - Sistema de Gestión de Nómina</p>
-	`, usuario.Nombre, resetLink)
 
-	if err := sendEmail(usuario.Email, subject, body, map[string]string{"to_name": usuario.Nombre}); err != nil {
+	if err := sendEmail(usuario.Email, subject, "", map[string]string{
+		"email":  usuario.Email,
+		"enlace": resetLink,
+	}); err != nil {
 		log.Printf("Error enviando email a %s: %v", usuario.Email, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Error al enviar correo: %v", err)})
 		return
