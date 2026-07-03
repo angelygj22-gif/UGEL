@@ -53,8 +53,11 @@ func ForgotPassword(c *gin.Context) {
 	subject := "Restablece tu contraseña - Planillas SU"
 
 	if err := sendEmail(usuario.Email, subject, "", map[string]string{
-		"email":  usuario.Email,
-		"enlace": resetLink,
+		"email":   usuario.Email,
+		"from_name": "Planillas SU",
+		"to_name": usuario.Nombre,
+		"link":    resetLink,
+		"enlace":  resetLink,
 	}); err != nil {
 		log.Printf("Error enviando email a %s: %v", usuario.Email, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Error al enviar correo: %v", err)})
