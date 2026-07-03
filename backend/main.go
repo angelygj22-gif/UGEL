@@ -58,6 +58,16 @@ func crearUsuarioAdmin() {
 		}
 		db.Create(&admin)
 		log.Println("Usuario admin creado: admin@planillas.su / admin123")
+
+		hash2, _ := bcrypt.GenerateFromPassword([]byte("Jesus#12"), bcrypt.DefaultCost)
+		jesus := models.Usuario{
+			Nombre:       "Jesus Aguilar",
+			Email:        "jesus.aguilar@planillas.su",
+			PasswordHash: string(hash2),
+			CreatedAt:   time.Now(),
+		}
+		db.Create(&jesus)
+		log.Println("Usuario Jesus Aguilar creado: jesus.aguilar@planillas.su / Jesus#12")
 	}
 }
 
