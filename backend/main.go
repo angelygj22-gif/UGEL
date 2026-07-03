@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"planillas-backend/handlers"
+	"planillas-backend/middleware"
 	"planillas-backend/models"
 
 	"github.com/gin-contrib/cors"
@@ -91,9 +92,14 @@ func main() {
 		{
 			usuarios.POST("/login", handlers.Login)
 			usuarios.POST("/registro", handlers.RegistrarUsuario)
+			usuarios.POST("/refresh", handlers.RefreshToken)
+			usuarios.GET("/me", middleware.AuthRequired(), handlers.Me)
+			usuarios.POST("/forgot-password", handlers.ForgotPassword)
+			usuarios.POST("/reset-password", handlers.ResetPassword)
 		}
 
 		personal := api.Group("/personal")
+		personal.Use(middleware.AuthRequired())
 		{
 			personal.GET("", handlers.ListarPersonal)
 			personal.GET("/buscar", handlers.BuscarPersonal)
@@ -106,6 +112,7 @@ func main() {
 		}
 
 		planillas := api.Group("/planillas")
+		planillas.Use(middleware.AuthRequired())
 		{
 			planillas.GET("", handlers.ListarPlanillas)
 			planillas.GET("/:id", handlers.ObtenerPlanilla)
@@ -118,6 +125,7 @@ func main() {
 		}
 
 		ingresos := api.Group("/ingresos")
+		ingresos.Use(middleware.AuthRequired())
 		{
 			ingresos.POST("", handlers.CrearIngreso)
 			ingresos.PUT("/:id", handlers.ActualizarIngreso)
@@ -125,6 +133,7 @@ func main() {
 		}
 
 		descuentos := api.Group("/descuentos")
+		descuentos.Use(middleware.AuthRequired())
 		{
 			descuentos.POST("", handlers.CrearDescuento)
 			descuentos.PUT("/:id", handlers.ActualizarDescuento)
@@ -132,6 +141,7 @@ func main() {
 		}
 
 		importar := api.Group("/importar")
+		importar.Use(middleware.AuthRequired())
 		{
 			importar.POST("/excel", handlers.ImportarExcel)
 			importar.POST("/json", handlers.ImportarJSON)
@@ -139,6 +149,7 @@ func main() {
 		}
 
 		dashboard := api.Group("/dashboard")
+		dashboard.Use(middleware.AuthRequired())
 		{
 			dashboard.GET("/resumen", handlers.ResumenDashboard)
 		}

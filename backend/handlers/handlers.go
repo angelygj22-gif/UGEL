@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"time"
 
+	"planillas-backend/middleware"
 	"planillas-backend/models"
 
 	"github.com/gin-gonic/gin"
@@ -21,8 +22,9 @@ func getDB(c *gin.Context) *gorm.DB {
 func Login(c *gin.Context) {
 	db := getDB(c)
 	var input struct {
-		Email    string `json:"email" binding:"required"`
-		Password string `json:"password" binding:"required"`
+		Email      string `json:"email" binding:"required"`
+		Password   string `json:"password" binding:"required"`
+		RememberMe bool   `json:"remember_me"`
 	}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -41,11 +43,22 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	token := fmt.Sprintf("token_%d_%d", usuario.ID, time.Now().Unix())
+	accessToken, err := middleware.GenerateAccessToken(usuario.ID, usuario.Nombre, usuario.Email, input.RememberMe)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al generar token"})
+		return
+	}
+
+	refreshToken, err := middleware.GenerateRefreshToken(usuario.ID, input.RememberMe)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al generar refresh token"})
+		return
+	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Login exitoso",
-		"token":   token,
+		"message":       "Login exitoso",
+		"access_token":  accessToken,
+		"refresh_token": refreshToken,
 		"user": gin.H{
 			"id":     usuario.ID,
 			"nombre": usuario.Nombre,
@@ -54,29 +67,100 @@ func Login(c *gin.Context) {
 	})
 }
 
-func RegistrarUsuario(c *gin.Context) {
+func RefreshToken(c *gin.Context) {
 	db := getDB(c)
-	var input models.Usuario
+	var input struct {
+		RefreshToken string `json:"refresh_token" binding:"required"`
+	}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Datos inválidos"})
 		return
 	}
 
-	hash, err := bcrypt.GenerateFromPassword([]byte(input.PasswordHash), bcrypt.DefaultCost)
+	claims, err := middleware.ValidateRefreshToken(input.RefreshToken)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Refresh token inválido o expirado"})
+		return
+	}
+
+	var usuario models.Usuario
+	if err := db.First(&usuario, claims.UserID).Error; err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Usuario no encontrado"})
+		return
+	}
+
+	accessToken, err := middleware.GenerateAccessToken(usuario.ID, usuario.Nombre, usuario.Email, false)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al generar token"})
+		return
+	}
+
+	newRefreshToken, err := middleware.GenerateRefreshToken(usuario.ID, false)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al generar refresh token"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"access_token":  accessToken,
+		"refresh_token": newRefreshToken,
+	})
+}
+
+func Me(c *gin.Context) {
+	db := getDB(c)
+	userID := c.GetUint("user_id")
+
+	var usuario models.Usuario
+	if err := db.First(&usuario, userID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Usuario no encontrado"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"id":     usuario.ID,
+		"nombre": usuario.Nombre,
+		"email":  usuario.Email,
+	})
+}
+
+func RegistrarUsuario(c *gin.Context) {
+	db := getDB(c)
+	var input struct {
+		Nombre   string `json:"nombre" binding:"required"`
+		Email    string `json:"email" binding:"required"`
+		Password string `json:"password" binding:"required"`
+	}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Datos inválidos"})
+		return
+	}
+
+	hash, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al encriptar password"})
 		return
 	}
-	input.PasswordHash = string(hash)
-	input.CreatedAt = time.Now()
 
-	if err := db.Create(&input).Error; err != nil {
+	usuario := models.Usuario{
+		Nombre:       input.Nombre,
+		Email:        input.Email,
+		PasswordHash: string(hash),
+		CreatedAt:    time.Now(),
+	}
+
+	if err := db.Create(&usuario).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al crear usuario"})
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "Usuario creado", "user": input})
+	c.JSON(http.StatusCreated, gin.H{"message": "Usuario creado", "user": gin.H{
+		"id":     usuario.ID,
+		"nombre": usuario.Nombre,
+		"email":  usuario.Email,
+	}})
 }
 
 func ListarPersonal(c *gin.Context) {

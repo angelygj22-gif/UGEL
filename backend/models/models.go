@@ -5,11 +5,13 @@ import (
 )
 
 type Usuario struct {
-	ID           uint      `json:"id" gorm:"primaryKey"`
-	Nombre       string    `json:"nombre" gorm:"size:100;not null"`
-	Email        string    `json:"email" gorm:"size:150;uniqueIndex;not null"`
-	PasswordHash string    `json:"-" gorm:"size:255;not null"`
-	CreatedAt    time.Time `json:"created_at"`
+	ID              uint       `json:"id" gorm:"primaryKey"`
+	Nombre          string     `json:"nombre" gorm:"size:100;not null"`
+	Email           string     `json:"email" gorm:"size:150;uniqueIndex;not null"`
+	PasswordHash    string     `json:"-" gorm:"size:255;not null"`
+	ResetToken      *string    `json:"-" gorm:"size:255"`
+	ResetTokenExpiry *time.Time `json:"-"`
+	CreatedAt       time.Time  `json:"created_at"`
 }
 
 type Personal struct {

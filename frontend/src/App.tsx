@@ -8,7 +8,7 @@ import Importar from './pages/Importar'
 import Exportar from './pages/Exportar'
 import Auth from './pages/Auth'
 
-const AuthContext = createContext<{ isAuthenticated: boolean; login: () => void; logout: () => void }>({
+const AuthContext = createContext<{ isAuthenticated: boolean; login: (token: string, refreshToken: string, user: any) => void; logout: () => void }>({
   isAuthenticated: false,
   login: () => {},
   logout: () => {}
@@ -28,7 +28,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
 function AppContent() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    return localStorage.getItem('isAuthenticated') === 'true'
+    return !!localStorage.getItem('access_token')
   })
 
   useEffect(() => {
@@ -38,22 +38,27 @@ function AppContent() {
     }
   }, [])
 
-  const login = () => {
-    setIsAuthenticated(true)
+  const login = (token: string, refreshToken: string, user: any) => {
+    localStorage.setItem('access_token', token)
+    localStorage.setItem('refresh_token', refreshToken)
+    localStorage.setItem('user_data', JSON.stringify(user))
     localStorage.setItem('isAuthenticated', 'true')
+    setIsAuthenticated(true)
   }
 
   const logout = () => {
-    setIsAuthenticated(false)
-    localStorage.setItem('isAuthenticated', 'false')
-    localStorage.removeItem('auth_token')
+    localStorage.removeItem('access_token')
+    localStorage.removeItem('refresh_token')
     localStorage.removeItem('user_data')
+    localStorage.removeItem('isAuthenticated')
+    setIsAuthenticated(false)
   }
 
   return (
     <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
       <Routes>
         <Route path="/auth" element={isAuthenticated ? <Navigate to="/" replace /> : <Auth />} />
+        <Route path="/reset-password" element={<Auth />} />
         <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
           <Route index element={<Dashboard />} />
           <Route path="personal" element={<Personal />} />

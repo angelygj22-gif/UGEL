@@ -46,9 +46,6 @@ export default function Layout() {
   const userInitials = userName.split(' ').map((n: string) => n.charAt(0)).join('').substring(0, 2).toUpperCase()
 
   const handleLogout = () => {
-    localStorage.removeItem('auth_token')
-    localStorage.removeItem('user_data')
-    localStorage.removeItem('isAuthenticated')
     logout()
     navigate('/auth')
   }
