@@ -36,10 +36,10 @@ func getEnv(key, fallback string) string {
 }
 
 type emailJSRequest struct {
-	ServiceID  string            `json:"service_id"`
-	TemplateID string            `json:"template_id"`
-	UserID     string            `json:"user_id"`
-	AccessToken string           `json:"accessToken"`
+	ServiceID      string            `json:"service_id"`
+	TemplateID     string            `json:"template_id"`
+	UserID         string            `json:"user_id"`
+	AccessToken    string            `json:"accessToken"`
 	TemplateParams map[string]string `json:"template_params"`
 }
 
@@ -78,7 +78,9 @@ func sendEmail(to, subject, html string, params map[string]string) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("EmailJS respondio con status %d", resp.StatusCode)
+		buf := new(bytes.Buffer)
+		buf.ReadFrom(resp.Body)
+		return fmt.Errorf("EmailJS respondio con status %d: %s", resp.StatusCode, buf.String())
 	}
 
 	log.Printf("[EMAILJS] Correo enviado exitosamente a %s", to)
