@@ -15,6 +15,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// ForgotPassword genera un token de recuperación y envía un correo al usuario
 func ForgotPassword(c *gin.Context) {
 	db := getDB(c)
 	var input struct {
@@ -68,6 +69,7 @@ func ForgotPassword(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Si el correo existe, recibirás un enlace para restablecer tu contraseña"})
 }
 
+// ResetPassword valida el token y actualiza la contraseña del usuario
 func ResetPassword(c *gin.Context) {
 	db := getDB(c)
 	var input struct {

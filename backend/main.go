@@ -1,3 +1,5 @@
+// Sistema de Gestión de Planillas - SU
+// Backend API REST en Go con Gin Framework y GORM
 package main
 
 import (
@@ -20,6 +22,7 @@ import (
 
 var db *gorm.DB
 
+// initDB conecta a PostgreSQL, ejecuta migraciones y crea usuarios iniciales
 func initDB() {
 	dsn := os.Getenv("DATABASE_URL")
 	if dsn == "" {
@@ -45,6 +48,7 @@ func initDB() {
 	log.Println("Base de datos conectada correctamente")
 }
 
+// crearUsuarioAdmin crea los usuarios por defecto si la BD está vacía
 func crearUsuarioAdmin() {
 	var count int64
 	db.Model(&models.Usuario{}).Count(&count)

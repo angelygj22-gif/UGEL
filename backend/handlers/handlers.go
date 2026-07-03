@@ -19,6 +19,7 @@ func getDB(c *gin.Context) *gorm.DB {
 	return c.MustGet("db").(*gorm.DB)
 }
 
+// Login autentica usuario por email/password y retorna tokens JWT
 func Login(c *gin.Context) {
 	db := getDB(c)
 	var input struct {
@@ -67,6 +68,7 @@ func Login(c *gin.Context) {
 	})
 }
 
+// RefreshToken renueva el access token usando un refresh token válido
 func RefreshToken(c *gin.Context) {
 	db := getDB(c)
 	var input struct {
@@ -108,6 +110,7 @@ func RefreshToken(c *gin.Context) {
 	})
 }
 
+// Me retorna los datos del usuario autenticado actual
 func Me(c *gin.Context) {
 	db := getDB(c)
 	userID := c.GetUint("user_id")
@@ -125,6 +128,7 @@ func Me(c *gin.Context) {
 	})
 }
 
+// RegistrarUsuario crea un nuevo usuario con contraseña hasheada
 func RegistrarUsuario(c *gin.Context) {
 	db := getDB(c)
 	var input struct {

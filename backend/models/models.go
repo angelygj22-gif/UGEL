@@ -4,6 +4,7 @@ import (
 	"time"
 )
 
+// Usuario representa un usuario del sistema con autenticación JWT
 type Usuario struct {
 	ID              uint       `json:"id" gorm:"primaryKey"`
 	Nombre          string     `json:"nombre" gorm:"size:100;not null"`
@@ -14,6 +15,7 @@ type Usuario struct {
 	CreatedAt       time.Time  `json:"created_at"`
 }
 
+// Personal representa un empleado registrado en el sistema
 type Personal struct {
 	ID        uint      `json:"id" gorm:"primaryKey"`
 	DNI       string    `json:"dni" gorm:"size:20"`
@@ -31,6 +33,7 @@ func (Personal) TableName() string { return "personal" }
 
 func (Planilla) TableName() string { return "planilla" }
 
+// Planilla representa la nómina de un empleado en un período específico
 type Planilla struct {
 	ID              uint        `json:"id" gorm:"primaryKey"`
 	PersonalID      uint        `json:"personal_id" gorm:"not null"`
@@ -50,6 +53,7 @@ func (p *Planilla) CalculateTotal() {
 	p.TotalLiquido = p.TotalHaberes - p.TotalDescuentos
 }
 
+// Ingreso representa un haber o ingreso de un empleado en una planilla
 type Ingreso struct {
 	ID         uint    `json:"id" gorm:"primaryKey"`
 	PlanillaID uint    `json:"planilla_id" gorm:"not null"`
@@ -58,6 +62,7 @@ type Ingreso struct {
 	Comentario string  `json:"comentario" gorm:"type:text"`
 }
 
+// Descuento representa un descuento aplicado a un empleado en una planilla
 type Descuento struct {
 	ID         uint    `json:"id" gorm:"primaryKey"`
 	PlanillaID uint    `json:"planilla_id" gorm:"not null"`

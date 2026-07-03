@@ -1,3 +1,4 @@
+// Package middleware provee autenticación JWT para el sistema de planillas
 package middleware
 
 import (
@@ -20,6 +21,7 @@ func init() {
 	jwtSecret = []byte(secret)
 }
 
+// Claims contiene los datos del usuario en el token de acceso
 type Claims struct {
 	UserID uint   `json:"user_id"`
 	Nombre string `json:"nombre"`
@@ -27,11 +29,13 @@ type Claims struct {
 	jwt.RegisteredClaims
 }
 
+// RefreshClaims contiene solo el ID para tokens de renovación
 type RefreshClaims struct {
 	UserID uint `json:"user_id"`
 	jwt.RegisteredClaims
 }
 
+// GenerateAccessToken genera un JWT de acceso (10 min o 7 días con rememberMe)
 func GenerateAccessToken(userID uint, nombre, email string, rememberMe bool) (string, error) {
 	expiry := 10 * time.Minute
 	if rememberMe {
@@ -50,6 +54,7 @@ func GenerateAccessToken(userID uint, nombre, email string, rememberMe bool) (st
 	return token.SignedString(jwtSecret)
 }
 
+// GenerateRefreshToken genera un JWT para renovar el access token (24h o 7d)
 func GenerateRefreshToken(userID uint, rememberMe bool) (string, error) {
 	expiry := 24 * time.Hour
 	if rememberMe {
@@ -66,6 +71,7 @@ func GenerateRefreshToken(userID uint, rememberMe bool) (string, error) {
 	return token.SignedString(jwtSecret)
 }
 
+// ValidateToken verifica y retorna los claims de un access token
 func ValidateToken(tokenString string) (*Claims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 		return jwtSecret, nil
@@ -80,6 +86,7 @@ func ValidateToken(tokenString string) (*Claims, error) {
 	return claims, nil
 }
 
+// ValidateRefreshToken verifica y retorna los claims de un refresh token
 func ValidateRefreshToken(tokenString string) (*RefreshClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &RefreshClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return jwtSecret, nil
@@ -94,6 +101,7 @@ func ValidateRefreshToken(tokenString string) (*RefreshClaims, error) {
 	return claims, nil
 }
 
+// AuthRequired es un middleware que protege rutas requiriendo un JWT válido
 func AuthRequired() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
