@@ -429,7 +429,7 @@ export default function Auth() {
                   <FileSpreadsheet className="w-10 h-10 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-6xl font-bold text-white tracking-tight leading-none">esPlanillas<span className="text-red-500">SU</span></h1>
+                  <h1 className="text-6xl font-bold text-white tracking-tight leading-none">Planillas</h1>
                   <p className="text-lg text-gray-400 font-light mt-2">UGEL 08 Cañete — Registro Histórico</p>
                 </div>
               </div>
@@ -465,7 +465,7 @@ export default function Auth() {
                   </div>
                 ))}
               </div>
-              <p className="text-gray-500 text-sm">+150 usuarios confían en esPlanillasSU</p>
+              
             </div>
           </div>
         </div>
@@ -479,7 +479,7 @@ export default function Auth() {
             <div className="w-16 h-16 bg-gradient-to-br from-red-600 to-red-800 rounded-2xl flex items-center justify-center shadow-xl mx-auto mb-4">
               <FileSpreadsheet className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-3xl font-bold text-gray-900">esPlanillas<span className="text-red-600">SU</span></h1>
+            <h1 className="text-3xl font-bold text-gray-900">Planillas</h1>
             <p className="text-gray-500 mt-1 text-sm">UGEL 08 Cañete — Registro Histórico</p>
           </div>
 
@@ -490,7 +490,7 @@ export default function Auth() {
           <div className="mt-8 pt-6 border-t border-gray-200/60">
             <div className="flex items-center justify-center gap-2 text-gray-400">
               <Sparkles className="w-3.5 h-3.5" />
-              <p className="text-center text-xs">© {new Date().getFullYear()} esPlanillasSU — UGEL 08 Cañete</p>
+              <p className="text-center text-xs">© {new Date().getFullYear()} Planillas — UGEL 08 Cañete</p>
             </div>
           </div>
         </div>

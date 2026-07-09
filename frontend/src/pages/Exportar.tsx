@@ -185,12 +185,14 @@ export default function Exportar() {
     const totalDescuentos = sorted.reduce((s, p) => s + (p.total_descuentos || 0), 0)
     const totalLiquido = sorted.reduce((s, p) => s + (p.total_liquido || 0), 0)
 
+    const origin = window.location.origin
     let html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
       body { font-family: Arial, sans-serif; font-size: 12px; margin: 0; padding: 10px; }
       table { border-collapse: collapse; width: 100%; margin: 0; font-size: 10px; }
       th, td { border: 1px solid #ddd; padding: 3px 5px; text-align: left; }
       th { background-color: #dc2626; color: white; }
-      .header { background: linear-gradient(135deg, #dc2626, #b91c1c); color: white; padding: 12px 16px; }
+      .header { background: linear-gradient(135deg, #dc2626, #b91c1c); color: white; padding: 12px 16px; display: flex; align-items: center; gap: 16px; }
+      .header-logo { height: 60px; width: auto; }
       .header h1 { margin: 0; font-size: 18px; }
       .header p { margin: 2px 0 0; font-size: 12px; opacity: .8; }
       h2 { font-size: 13px; margin: 6px 0; }
@@ -208,12 +210,13 @@ export default function Exportar() {
         th, td { padding: 2px 3px; }
         .planilla-item { min-width: 150px; }
         .header { padding: 6px 10px; }
+        .header-logo { height: 40px; }
         .header h1 { font-size: 12pt; }
         .header p { font-size: 8pt; }
         h2 { font-size: 9pt; margin: 4px 0; }
       }
     </style></head><body>
-    <div class="header"><h1>CONSTANCIA DE PAGOS DE HABERES Y DESCUENTOS</h1><p>Sistema de Gestión Planillas SU</p></div>
+    <div class="header"><img class="header-logo" src="${origin}/img/logo_minedu.png" alt="MINEDU" /><div><h1>CONSTANCIA DE PAGOS DE HABERES Y DESCUENTOS</h1><p>Sistema de Gestión Planillas</p></div></div>
     <h2>DATOS DEL EMPLEADO</h2>
     <table><tr><th>Apellidos</th><td>${selectedPerson.apellidos}</td></tr>
     <tr><th>Nombres</th><td>${selectedPerson.nombres}</td></tr>
@@ -244,7 +247,7 @@ export default function Exportar() {
       html += `<tr class="total-row"><td colspan="2">Subtotal Descuentos</td><td class="negative">S/ ${planilla.total_descuentos.toFixed(2)}</td></tr>
       <tr class="total-row"><td colspan="2"><strong>Líquido del Período</strong></td><td class="positive"><strong>S/ ${planilla.total_liquido.toFixed(2)}</strong></td></tr></table></div>`
     })
-    html += `</div><p style="margin-top:20px;color:#666;font-size:12px">Exportado el: ${new Date().toLocaleString('es-PE')} | Sistema Planillas SU</p></body></html>`
+    html += `</div><p style="margin-top:20px;color:#666;font-size:12px">Exportado el: ${new Date().toLocaleString('es-PE')} | Sistema Planillas</p></body></html>`
     return html
   }
 

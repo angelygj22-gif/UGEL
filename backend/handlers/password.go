@@ -50,11 +50,11 @@ func ForgotPassword(c *gin.Context) {
 	frontendURL := getEnv("FRONTEND_URL", "https://ugel-08-constancias.vercel.app")
 	resetLink := fmt.Sprintf("%s/reset-password?token=%s", frontendURL, token)
 
-	subject := "Restablece tu contraseña - Planillas SU"
+	subject := "Restablece tu contraseña - Planillas"
 
 	if err := sendEmail(usuario.Email, subject, "", map[string]string{
 		"email":   usuario.Email,
-		"from_name": "Planillas SU",
+		"from_name": "Planillas",
 		"to_name": usuario.Nombre,
 		"link":    resetLink,
 		"enlace":  resetLink,
