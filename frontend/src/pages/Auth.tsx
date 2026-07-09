@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../App'
-import { AlertCircle, Eye, EyeOff, Loader2, CheckCircle, ChevronRight, Lock, Mail, User, Sparkles, FileSpreadsheet, ArrowLeft, Building2, GraduationCap, TrendingUp } from 'lucide-react'
+import { AlertCircle, Eye, EyeOff, Loader2, CheckCircle, ChevronRight, Lock, Mail, User, Sparkles, FileSpreadsheet, ArrowLeft, Building2, ScrollText, Clock } from 'lucide-react'
 import api from '../services/api'
 import { useSearchParams } from 'react-router-dom'
 
@@ -261,7 +261,7 @@ export default function Auth() {
         <p className="text-sm text-gray-500 font-medium text-center mb-3">¿No tienes acceso? Contacta al administrador</p>
         <button onClick={handleDemoLogin} className="w-full py-3.5 bg-white border-2 border-gray-200 hover:border-red-400 hover:bg-red-50/50 text-gray-700 font-semibold rounded-xl transition-all duration-300 text-sm flex items-center justify-center gap-2 group hover:shadow-lg">
           <User className="w-4 h-4 group-hover:scale-110 transition-transform" />
-          <span>Usar credenciales de prueba</span>
+          <span>Credenciales de prueba</span>
           <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-red-500 group-hover:translate-x-1 transition-all" />
         </button>
       </div>
@@ -429,20 +429,20 @@ export default function Auth() {
                   <FileSpreadsheet className="w-10 h-10 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-6xl font-bold text-white tracking-tight leading-none">Planillas<span className="text-red-500">SU</span></h1>
-                  <p className="text-lg text-gray-400 font-light mt-2">Sistema de Gestión de Nómina</p>
+                  <h1 className="text-6xl font-bold text-white tracking-tight leading-none">esPlanillas<span className="text-red-500">SU</span></h1>
+                  <p className="text-lg text-gray-400 font-light mt-2">UGEL 08 Cañete — Registro Histórico</p>
                 </div>
               </div>
               <p className="text-gray-400/80 text-lg leading-relaxed max-w-md">
-                Administra tu personal, planillas y pagos de manera eficiente y segura
+                Sistema de gestión y registro histórico de planillas — UGEL 08 Cañete
               </p>
             </div>
 
             <div className="space-y-4">
               {[
-                { icon: Building2, title: 'Gestión Integral', desc: 'Administra personal, planillas y pagos en un solo lugar', color: 'from-red-600 to-red-700' },
-                { icon: GraduationCap, title: 'Importación Masiva', desc: 'Importa datos desde Excel de forma rápida y segura', color: 'from-gray-700 to-gray-800' },
-                { icon: TrendingUp, title: 'Reportes Detallados', desc: 'Genera reportes y estadísticas en tiempo real', color: 'from-gray-600 to-gray-700' },
+                { icon: Building2, title: 'UGEL 08 Cañete', desc: 'Gestión educativa y administrativa regional', color: 'from-red-600 to-red-700' },
+                { icon: ScrollText, title: 'Registro de Planillas', desc: 'Historial completo de nóminas y pagos', color: 'from-gray-700 to-gray-800' },
+                { icon: Clock, title: 'Control Histórico', desc: 'Accede a planillas de períodos anteriores', color: 'from-gray-600 to-gray-700' },
               ].map((item, i) => (
                 <div key={i} className={`flex items-start gap-5 p-5 bg-white/[0.03] backdrop-blur-md rounded-2xl border border-white/[0.06] hover:bg-white/[0.07] transition-all duration-500 group cursor-default`}
                      style={{ transitionDelay: `${400 + i * 150}ms` }}>
@@ -461,11 +461,11 @@ export default function Auth() {
               <div className="flex -space-x-2">
                 {[1,2,3].map(i => (
                   <div key={i} className={`w-10 h-10 rounded-full border-2 border-gray-800 bg-gradient-to-br ${i===1?'from-red-500 to-red-600':i===2?'from-gray-600 to-gray-700':'from-gray-500 to-gray-600'} flex items-center justify-center shadow-lg`}>
-                    <span className="text-white text-xs font-bold">{['AD','DI','RT'][i-1]}</span>
+                    <span className="text-white text-xs font-bold">{['UG','EL','08'][i-1]}</span>
                   </div>
                 ))}
               </div>
-              <p className="text-gray-500 text-sm">+150 usuarios confían en PlanillasSU</p>
+              <p className="text-gray-500 text-sm">+150 usuarios confían en esPlanillasSU</p>
             </div>
           </div>
         </div>
@@ -479,8 +479,8 @@ export default function Auth() {
             <div className="w-16 h-16 bg-gradient-to-br from-red-600 to-red-800 rounded-2xl flex items-center justify-center shadow-xl mx-auto mb-4">
               <FileSpreadsheet className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-3xl font-bold text-gray-900">Planillas<span className="text-red-600">SU</span></h1>
-            <p className="text-gray-500 mt-1 text-sm">Sistema de Gestión de Nómina</p>
+            <h1 className="text-3xl font-bold text-gray-900">esPlanillas<span className="text-red-600">SU</span></h1>
+            <p className="text-gray-500 mt-1 text-sm">UGEL 08 Cañete — Registro Histórico</p>
           </div>
 
           {view === 'login' && loginView}
@@ -490,7 +490,7 @@ export default function Auth() {
           <div className="mt-8 pt-6 border-t border-gray-200/60">
             <div className="flex items-center justify-center gap-2 text-gray-400">
               <Sparkles className="w-3.5 h-3.5" />
-              <p className="text-center text-xs">© {new Date().getFullYear()} Planillas SU — Todos los derechos reservados</p>
+              <p className="text-center text-xs">© {new Date().getFullYear()} esPlanillasSU — UGEL 08 Cañete</p>
             </div>
           </div>
         </div>

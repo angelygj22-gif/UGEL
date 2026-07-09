@@ -1,12 +1,11 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { LayoutDashboard, Users, FileSpreadsheet, Upload, Download, Menu, LogOut, ChevronDown } from 'lucide-react'
+import { Users, FileSpreadsheet, Upload, Download, Menu, LogOut, ChevronDown, ScrollText } from 'lucide-react'
 import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '../App'
 
 const navItems = [
-  { to: '/', icon: LayoutDashboard, label: 'Dashboard', desc: 'Resumen general' },
+  { to: '/planillas', icon: ScrollText, label: 'Planillas', desc: 'Nóminas y pagos' },
   { to: '/personal', icon: Users, label: 'Personal', desc: 'Gestión de empleados' },
-  { to: '/planillas', icon: FileSpreadsheet, label: 'Planillas', desc: 'Nóminas y pagos' },
   { to: '/importar', icon: Upload, label: 'Importar', desc: 'Importar datos' },
   { to: '/exportar', icon: Download, label: 'Exportar', desc: 'Exportar planillas' },
 ]
@@ -14,20 +13,12 @@ const navItems = [
 export default function Layout() {
   const { logout } = useAuth()
   const navigate = useNavigate()
-  const [sidebarVisible, setSidebarVisible] = useState(true)
-  const [isMobile, setIsMobile] = useState(false)
+  const [sidebarVisible, setSidebarVisible] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const userMenuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const checkMobile = () => {
-      const mobile = window.innerWidth < 1024
-      setIsMobile(mobile)
-      setSidebarVisible(!mobile)
-    }
-    checkMobile()
-    window.addEventListener('resize', checkMobile)
-    return () => window.removeEventListener('resize', checkMobile)
+    setSidebarVisible(false)
   }, [])
 
   useEffect(() => {
@@ -50,7 +41,7 @@ export default function Layout() {
     navigate('/auth')
   }
 
-  const currentPage = navItems.find(n => window.location.pathname === n.to)?.label || 'Dashboard'
+  const currentPage = navItems.find(n => window.location.pathname === n.to)?.label || 'Planillas'
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -63,8 +54,8 @@ export default function Layout() {
                   <FileSpreadsheet className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-gray-900 dark:text-white">Planillas SU</h1>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Gestión de Nómina</p>
+                  <h1 className="text-xl font-bold text-gray-900 dark:text-white">esPlanillasSU</h1>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Registro Histórico</p>
                 </div>
               </div>
             </div>
@@ -75,6 +66,7 @@ export default function Layout() {
               <NavLink
                 key={item.to}
                 to={item.to}
+                onClick={() => setSidebarVisible(false)}
                 className={({ isActive }) =>
                   `group flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-200 ${
                     isActive
@@ -110,24 +102,20 @@ export default function Layout() {
         </div>
       </aside>
 
-      <div className={`transition-all duration-300 ${sidebarVisible ? 'lg:ml-72' : ''}`}>
+      <div className={`transition-all duration-300 lg:ml-72`}>
         <header className="sticky top-0 z-40 backdrop-blur-xl bg-white/95 dark:bg-gray-800/95 border-b border-gray-200 dark:border-gray-700 shadow-sm">
-          <div className="flex items-center justify-between px-6 h-16">
-            <div className="flex items-center gap-4">
-              {isMobile && (
-                <button onClick={() => setSidebarVisible(!sidebarVisible)} className="p-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300">
-                  <Menu className="w-5 h-5" />
-                </button>
-              )}
+          <div className="flex items-center justify-between px-4 lg:px-6 h-16">
+            <div className="flex items-center gap-3">
+              <button onClick={() => setSidebarVisible(!sidebarVisible)} className="p-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300">
+                <Menu className="w-5 h-5" />
+              </button>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-gradient-to-br from-red-600 to-red-700 rounded-xl flex items-center justify-center">
                   <FileSpreadsheet className="w-5 h-5 text-white" />
                 </div>
-                <div>
-                  <h2 className="text-lg font-bold text-gray-900 dark:text-white">{currentPage}</h2>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    {new Date().toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
-                  </p>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-lg font-bold text-gray-900 dark:text-white">esPlanillasSU</h2>
+                  <span className="hidden sm:inline-flex text-xs text-gray-500 dark:text-gray-400">— {currentPage}</span>
                 </div>
               </div>
             </div>
@@ -140,7 +128,7 @@ export default function Layout() {
                 <div className="w-9 h-9 bg-gradient-to-br from-red-600 to-red-700 rounded-lg flex items-center justify-center text-white font-bold text-sm">
                   {userInitials}
                 </div>
-                <div className="text-left hidden md:block">
+                <div className="text-left hidden sm:block">
                   <p className="text-sm font-semibold text-gray-900 dark:text-white">{userName}</p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">Administrador</p>
                 </div>
@@ -168,15 +156,15 @@ export default function Layout() {
           </div>
         </header>
 
-        <main className="p-6 lg:p-8">
+        <main className="p-4 lg:p-8">
           <div className="max-w-7xl mx-auto">
             <Outlet />
           </div>
         </main>
       </div>
 
-      {isMobile && sidebarVisible && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-30 lg:hidden" onClick={() => setSidebarVisible(false)}>
+      {sidebarVisible && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-30" onClick={() => setSidebarVisible(false)}>
           <div className="absolute inset-y-0 left-0 w-72" onClick={e => e.stopPropagation()} />
         </div>
       )}
