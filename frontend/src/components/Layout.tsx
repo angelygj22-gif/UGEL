@@ -45,8 +45,6 @@ export default function Layout() {
     navigate('/auth')
   }
 
-  const currentPage = navItems.find(n => window.location.pathname === n.to)?.label || 'Planillas'
-
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <aside className={`fixed inset-y-0 left-0 z-50 flex flex-col bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 shadow-lg transition-transform duration-300 w-72 ${
@@ -58,8 +56,8 @@ export default function Layout() {
               <FileSpreadsheet className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white">esPlanillasSU</h1>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Registro Histórico</p>
+              <h1 className="text-xl font-bold text-gray-900 dark:text-white">Planillas</h1>
+              <p className="text-xs text-gray-500 dark:text-gray-400">UGEL 08 Cañete</p>
             </div>
           </div>
           {isMobile && (
@@ -123,8 +121,8 @@ export default function Layout() {
                   <FileSpreadsheet className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex items-center gap-2">
-                  <h2 className="text-lg font-bold text-gray-900 dark:text-white">esPlanillasSU</h2>
-                  <span className="hidden sm:inline-flex text-xs text-gray-500 dark:text-gray-400">— {currentPage}</span>
+                  <h2 className="text-lg font-bold text-gray-900 dark:text-white">Planillas</h2>
+                  <span className="hidden sm:inline-flex text-xs text-gray-500 dark:text-gray-400">— UGEL 08 Cañete</span>
                 </div>
               </div>
             </div>
@@ -139,7 +137,10 @@ export default function Layout() {
                 </div>
                 <div className="text-left hidden sm:block">
                   <p className="text-sm font-semibold text-gray-900 dark:text-white">{userName}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Administrador</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
+                    <span className="inline-block w-1.5 h-1.5 bg-red-600 rounded-full"></span>
+                    UGEL 08 Cañete
+                  </p>
                 </div>
                 <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${userMenuOpen ? 'rotate-180' : ''}`} />
               </button>
